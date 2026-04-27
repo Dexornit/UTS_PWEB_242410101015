@@ -1,58 +1,154 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📋 Dokumentasi & Presentasi Project UTS
+## MatcaSpace — Aplikasi Manajemen Tugas Berbasis Laravel MVC
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> **Mata Kuliah:** Pemrograman Web  
+> **Teknologi:** Laravel · PHP · Blade Engine · Font Awesome v5 · Google Fonts (Inter)  
+> **Tema Desain:** Minimalism — Color Palette Matcha Green
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📁 BAGIAN Gambaran Umum Project
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+###
+Aplikasi web manajemen tugas sederhana yang dibangun menggunakan framework Laravel dengan pola arsitektur **MVC (Model–View–Controller)**. Aplikasi ini memungkinkan pengguna untuk:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. **Login** menggunakan username (disimpan ke Session)
+2. Melihat **Dashboard** berisi statistik dan aktivitas terbaru
+3. Melihat **Pengelolaan Tugas** berupa tabel daftar tugas
+4. Melihat halaman **Profil** berisi informasi dan keahlian pengguna
+5. **Logout** yang menghapus session
 
-## Learning Laravel
+> Tidak ada database / CRUD — semua data disimulasikan menggunakan **array PHP** di dalam Controller, sesuai ketentuan UTS.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🗂️ BAGIAN Struktur File Project
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+UTSB/                                   ← Root project Laravel
+│
+├── routes/
+│   └── web.php                         ← [1] Semua definisi URL & routing
+│
+├── app/Http/Controllers/
+│   └── PageController.php              ← [2] Satu-satunya Controller (semua logika)
+│
+├── resources/views/
+│   ├── layouts/
+│   │   └── app.blade.php               ← [3] Master Layout (kerangka HTML utama)
+│   │
+│   ├── login.blade.php                 ← [4] View: Halaman Login
+│   ├── dashboard.blade.php             ← [5] View: Halaman Dashboard
+│   ├── pengelolaan.blade.php           ← [6] View: Halaman Pengelolaan
+│   ├── profile.blade.php               ← [7] View: Halaman Profil
+│   │
+│   └── components/
+│       ├── navbar.blade.php            ← [8] Blade Component: Navigasi
+│       └── footer.blade.php            ← [9] Blade Component: Footer
+│
+└── public/
+    └── images/
+        └── LogoD.png                   ← Aset logo brand Dexornit
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### Skenario 1 — User Membuka Halaman Login
 
-## Contributing
+```
+Browser          Router           PageController      Blade View
+  |                 |                   |                  |
+  |── GET /login ──>|                   |                  |
+  |                 |── @login ────────>|                  |
+  |                 |                   |── view('login') >|
+  |                 |                   |                  |── Kompilasi HTML
+  |                 |                   |<── HTML ─────────|
+  |<── HTTP 200 ────|─────────────────────────────────────|
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Skenario 2 — User Submit Form Login
 
-## Code of Conduct
+```
+Browser              Router           PageController         Session
+  |                     |                   |                   |
+  |── POST /login/proses|                   |                   |
+  |   (username=Danu) ─>|                   |                   |
+  |                     |── @prosesLogin ──>|                   |
+  |                     |                   |── session->put() >|
+  |                     |                   |<── tersimpan ─────|
+  |<── HTTP 302 Redirect /dashboard ────────|
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Skenario 3 — User Membuka Dashboard
 
-## Security Vulnerabilities
+```
+Browser         Router        PageController      Session        Blade View
+  |                |                |                |               |
+  |── GET /dashboard ──────────────>|                |               |
+  |                |── @dashboard ─>|                |               |
+  |                |                |── get('username') ────────────>|
+  |                |                |<── 'Danu' ─────|               |
+  |                |                |── Siapkan array $statistik     |
+  |                |                |── Siapkan array $aktivitas     |
+  |                |                |── view('dashboard', data) ────>|
+  |                |                |                |   Kompilasi   |
+  |                |                |                |   @foreach    |
+  |<── HTTP 200 + HTML ─────────────────────────────────────────────|
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Skenario 4 — User Membuka Pengelolaan
 
-## License
+```
+Browser         Router        PageController      Session        Blade View
+  |                |                |                |               |
+  |── GET /pengelolaan ────────────>|                |               |
+  |                |── @pengelolaan>|                |               |
+  |                |                |── get('username') ────────────>|
+  |                |                |<── 'Danu' ─────|               |
+  |                |                |── Siapkan array $daftarTugas   |
+  |                |                |── view('pengelolaan', data) ──>|
+  |                |                |                |   @foreach    |
+  |<── HTTP 200 + HTML tabel tugas ─────────────────────────────────|
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Skenario 5 — User Membuka Profil
+
+```
+Browser         Router        PageController      Session        Blade View
+  |                |                |                |               |
+  |── GET /profile ────────────────>|                |               |
+  |                |── @profile ───>|                |               |
+  |                |                |── get('username') ────────────>|
+  |                |                |<── 'Danu' ─────|               |
+  |                |                |── Siapkan $infoProfile         |
+  |                |                |── Siapkan $keahlian            |
+  |                |                |── view('profile', data) ──────>|
+  |                |                |                | @foreach x2   |
+  |<── HTTP 200 + HTML profil ──────────────────────────────────────|
+```
+
+### Skenario 6 — User Logout
+
+```
+Browser         Router        PageController      Session
+  |                |                |                |
+  |── POST /logout ────────────────>|                |
+  |                |── @logout ────>|                |
+  |                |                |── session->forget('username') >|
+  |                |                |<── terhapus ───|
+  |<── HTTP 302 Redirect /login ────|
+```
+
+---
+
+### Alur Penggunaan
+
+```
+[Buka Browser] → /login
+    ↓ Masukkan username (bebas) → klik "Masuk"
+[Dashboard] → lihat statistik & aktivitas
+    ↓ Klik "Pengelolaan" di navbar
+[Pengelolaan] → lihat tabel daftar tugas
+    ↓ Klik "Profil" di navbar
+[Profil] → lihat info & skill bar
+    ↓ Klik "Keluar"
+[Kembali ke Login]
+```
