@@ -53,7 +53,7 @@ UTSB/                                   ← Root project Laravel
 
 ### Skenario 1 — User Membuka Halaman Login
 
-```
+```mermaid
 sequenceDiagram
     participant B as Browser (Client)
     participant R as Router (web.php)
