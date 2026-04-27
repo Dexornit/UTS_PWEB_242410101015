@@ -175,3 +175,15 @@ sequenceDiagram
     ↓ Klik "Keluar"
 [Kembali ke Login]
 ```
+
+### Tampilan Login
+<img width="1919" height="909" alt="image" src="https://github.com/user-attachments/assets/c4382e0e-bdf7-49d7-97ae-d59fc42faaaa" />
+
+### Tampilan Dashboard
+<img width="1919" height="910" alt="image" src="https://github.com/user-attachments/assets/a3f7646a-23a2-419d-9829-faf6c8eb6033" />
+
+### Tampilan Pengelolaan
+<img width="1919" height="910" alt="image" src="https://github.com/user-attachments/assets/737120b9-8ac0-4729-a951-9751e5828824" />
+
+### Tampilan Profile
+<img width="1919" height="911" alt="image" src="https://github.com/user-attachments/assets/804e3a08-a881-4b86-8f61-4a36b3fc661f" />
