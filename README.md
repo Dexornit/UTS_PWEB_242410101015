@@ -54,14 +54,18 @@ UTSB/                                   ← Root project Laravel
 ### Skenario 1 — User Membuka Halaman Login
 
 ```
-Browser          Router           PageController      Blade View
-  |                 |                   |                  |
-  |── GET /login ──>|                   |                  |
-  |                 |── @login ────────>|                  |
-  |                 |                   |── view('login') >|
-  |                 |                   |                  |── Kompilasi HTML
-  |                 |                   |<── HTML ─────────|
-  |<── HTTP 200 ────|─────────────────────────────────────|
+sequenceDiagram
+    participant B as Browser (Client)
+    participant R as Router (web.php)
+    participant C as PageController
+    participant V as Blade View
+
+    B->>R: HTTP GET /login
+    R->>C: Cocokkan route, panggil PageController@login
+    C->>V: return view('login')
+    V-->>C: Kompilasi login.blade.php → HTML
+    C-->>B: HTTP 200 Response + HTML form login
+
 ```
 
 ### Skenario 2 — User Submit Form Login
