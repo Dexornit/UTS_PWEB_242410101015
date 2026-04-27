@@ -65,80 +65,99 @@ sequenceDiagram
     C->>V: return view('login')
     V-->>C: Kompilasi login.blade.php → HTML
     C-->>B: HTTP 200 Response + HTML form login
-
 ```
 
 ### Skenario 2 — User Submit Form Login
 
-```
-Browser              Router           PageController         Session
-  |                     |                   |                   |
-  |── POST /login/proses|                   |                   |
-  |   (username=Danu) ─>|                   |                   |
-  |                     |── @prosesLogin ──>|                   |
-  |                     |                   |── session->put() >|
-  |                     |                   |<── tersimpan ─────|
-  |<── HTTP 302 Redirect /dashboard ────────|
+```mermaid
+sequenceDiagram
+    participant B as Browser (Client)
+    participant R as Router (web.php)
+    participant C as PageController
+    participant S as Session
+
+    B->>R: HTTP POST /login/proses (payload: username=Danu)
+    R->>C: Panggil PageController@prosesLogin(Request)
+    C->>C: $request->input('username') → validasi kosong?
+    C->>S: $request->session()->put('username', 'Danu')
+    S-->>C: Session tersimpan (key: 'username')
+    C-->>B: HTTP 302 Redirect → /dashboard
 ```
 
 ### Skenario 3 — User Membuka Dashboard
 
-```
-Browser         Router        PageController      Session        Blade View
-  |                |                |                |               |
-  |── GET /dashboard ──────────────>|                |               |
-  |                |── @dashboard ─>|                |               |
-  |                |                |── get('username') ────────────>|
-  |                |                |<── 'Danu' ─────|               |
-  |                |                |── Siapkan array $statistik     |
-  |                |                |── Siapkan array $aktivitas     |
-  |                |                |── view('dashboard', data) ────>|
-  |                |                |                |   Kompilasi   |
-  |                |                |                |   @foreach    |
-  |<── HTTP 200 + HTML ─────────────────────────────────────────────|
+```mermaid
+sequenceDiagram
+    participant B as Browser (Client)
+    participant R as Router (web.php)
+    participant C as PageController
+    participant S as Session
+    participant V as Blade View
+
+    B->>R: HTTP GET /dashboard (bawa Session Cookie)
+    R->>C: Panggil PageController@dashboard(Request)
+    C->>S: $request->session()->get('username', 'Pengguna')
+    S-->>C: Return 'Danu'
+    C->>C: Siapkan array $statistik dan $aktivitas
+    C->>V: return view('dashboard', [username, statistik, aktivitas])
+    V-->>C: Kompilasi dashboard.blade.php + @extends layout + @foreach data
+    C-->>B: HTTP 200 Response + HTML utuh
 ```
 
 ### Skenario 4 — User Membuka Pengelolaan
 
-```
-Browser         Router        PageController      Session        Blade View
-  |                |                |                |               |
-  |── GET /pengelolaan ────────────>|                |               |
-  |                |── @pengelolaan>|                |               |
-  |                |                |── get('username') ────────────>|
-  |                |                |<── 'Danu' ─────|               |
-  |                |                |── Siapkan array $daftarTugas   |
-  |                |                |── view('pengelolaan', data) ──>|
-  |                |                |                |   @foreach    |
-  |<── HTTP 200 + HTML tabel tugas ─────────────────────────────────|
+```mermaid
+sequenceDiagram
+    participant B as Browser (Client)
+    participant R as Router (web.php)
+    participant C as PageController
+    participant S as Session
+    participant V as Blade View
+
+    B->>R: HTTP GET /pengelolaan
+    R->>C: Panggil PageController@pengelolaan(Request)
+    C->>S: $request->session()->get('username')
+    S-->>C: Return 'Danu'
+    C->>C: Siapkan array $daftarTugas (6 item)
+    C->>V: return view('pengelolaan', [username, daftarTugas])
+    V-->>C: Kompilasi pengelolaan.blade.php + @foreach $daftarTugas
+    C-->>B: HTTP 200 Response + HTML tabel tugas
 ```
 
 ### Skenario 5 — User Membuka Profil
 
-```
-Browser         Router        PageController      Session        Blade View
-  |                |                |                |               |
-  |── GET /profile ────────────────>|                |               |
-  |                |── @profile ───>|                |               |
-  |                |                |── get('username') ────────────>|
-  |                |                |<── 'Danu' ─────|               |
-  |                |                |── Siapkan $infoProfile         |
-  |                |                |── Siapkan $keahlian            |
-  |                |                |── view('profile', data) ──────>|
-  |                |                |                | @foreach x2   |
-  |<── HTTP 200 + HTML profil ──────────────────────────────────────|
+```mermaid
+sequenceDiagram
+    participant B as Browser (Client)
+    participant R as Router (web.php)
+    participant C as PageController
+    participant S as Session
+    participant V as Blade View
+
+    B->>R: HTTP GET /profile
+    R->>C: Panggil PageController@profile(Request)
+    C->>S: $request->session()->get('username')
+    S-->>C: Return 'Danu'
+    C->>C: Siapkan array $infoProfile dan $keahlian
+    C->>V: return view('profile', [username, infoProfile, keahlian])
+    V-->>C: Kompilasi profile.blade.php + @foreach $infoProfile + @foreach $keahlian
+    C-->>B: HTTP 200 Response + HTML halaman profil
 ```
 
 ### Skenario 6 — User Logout
 
-```
-Browser         Router        PageController      Session
-  |                |                |                |
-  |── POST /logout ────────────────>|                |
-  |                |── @logout ────>|                |
-  |                |                |── session->forget('username') >|
-  |                |                |<── terhapus ───|
-  |<── HTTP 302 Redirect /login ────|
+```mermaid
+sequenceDiagram
+    participant B as Browser (Client)
+    participant R as Router (web.php)
+    participant C as PageController
+    participant S as Session
+
+    B->>R: HTTP POST /logout
+    R->>C: Panggil PageController@logout(Request)
+    C->>S: $request->session()->forget('username')
+    S-->>C: Session 'username' dihapus
+    C-->>B: HTTP 302 Redirect → /login
 ```
 
 ---
